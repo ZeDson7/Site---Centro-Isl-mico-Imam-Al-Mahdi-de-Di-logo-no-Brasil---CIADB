@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Bem-vindo</title>
+
+    <!-- Importação do arquivo de estilos externos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Importação de biblioteca de ícones Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="pagina-inicial">
+        <div class="topo-datas-verde">
+        <div class="centraliza-tudo">
+            <h2>Data de Hoje no Calendário Hijri</h2>
+            <p id="dataHijri"></p>
+            <p id="dataGreg"></p>
+            <h1 class="titulo-menor">Em nome de Deus, O Clemente, O Misericordioso</h1>
+            <p><em>Bismillah ir-Rahman ir-Rahim</em></p>
+        </div>
+    </div>
+    
+    <div class="centraliza-tudo">
+        <div class="icons">
+            <div class="icon">
+                <a href="/calendario?year={{ current_year }}&month={{ current_month }}" class="link-calendario">
+                <i class="fas fa-calendar-alt"></i>
+                <p>Calendário de Oração Islâmico</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/alcorao" class="link-alcorao">
+                    <i class="fas fa-book"></i>
+                    <p>Alcorão Sagrado</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/cadastro" class="link-cadastro">
+                    <i class="fas fa-user-plus"></i>
+                    <p>Cadastro</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/videos" class="link-videos">
+                    <i class="fas fa-video"></i>
+                    <p>Vídeos</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/loja" class="link-loja">
+                    <i class="fas fa-store"></i>
+                    <p>Loja</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/biblioteca" class="link-biblioteca">
+                    <i class="fas fa-book-open"></i>
+                    <p>Biblioteca Islâmica</p>
+                </a>
+            </div>
+            <div class="icon">
+                <a href="/cursos" class="link-cursos">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <p>Cursos</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <footer style="width:100%; text-align:center; margin-top:16px; margin-bottom:4px;">
+        <p>Centro Islâmico Imam Al Mahdi de Diálogo no Brasil - CIADB</p>
+        <p>Doações ao Centro Islâmico Imam Al Mahdi de Diálogo no Brasil - CIADB pelo PIX CNPJ: <strong>24244462000112</strong></p>
+    </footer>
+    <script>
+        function mostrarDataHijriHoje() {
+            const hoje = new Date();
+            const hijri = hoje.toLocaleDateString('ar-TN-u-ca-islamic', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            const partes = hijri.split('/');
+            const hijriFormatada = partes.reverse().join('-');
+            document.getElementById('dataHijri').textContent = hijriFormatada;
+
+            const greg = hoje.toLocaleDateString('pt-BR');
+            document.getElementById('dataGreg').textContent = greg;
+        }
+        mostrarDataHijriHoje();
+    </script>
+</body>
+</html>

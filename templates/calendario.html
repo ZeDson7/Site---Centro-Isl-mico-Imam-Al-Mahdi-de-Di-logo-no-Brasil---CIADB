@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Oração Islâmico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @font-face {
+            font-family: 'regular';
+            src: url('{{ url_for('static', filename='fonts/regular.ttf') }}') format('truetype');
+        }
+
+        body {
+            font-family: 'regular', Arial, sans-serif;
+            margin: 0px;
+            padding: 0;
+            background-image: url('{{ url_for('static', filename='images/logo_centromahdi.png') }}');
+            background-size: 76% auto;
+            background-repeat: no-repeat;
+            background-position: center -50px; /* Centraliza e desce 180px do topo */
+            text-align: center;
+            color: #333;
+        }
+
+        .calendar-container {
+            width: 40%;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: transparent;
+            box-shadow: none;
+            margin-top: 117px; /* Adicione esta linha ou aumente o valor */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: transparent;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 7px;
+            text-align: center;
+            font-size: 0.95em;
+            background-color: transparent;
+        }
+
+        th {
+            background-color: rgba(17, 98, 20, 0.85);
+            color: white;
+        }
+
+        td:hover {
+            background-color: rgba(154, 253, 158, 0.99);
+            cursor: pointer;
+        }
+
+        .navigation {
+            margin: 60px 0 10px 0;
+            font-size: 1.1em;         /* metade do tamanho anterior */
+            font-weight: bold;
+            color: #116214;            /* verde escuro */
+        }
+
+        .navigation button {
+            padding: 2px 6px;
+            font-size: 0.7em;          /* metade do tamanho anterior */
+            margin: 1px 2px;
+            background-color: #116214; /* verde escuro */
+            color: #fff;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .navigation button:hover {
+            background-color: #1a7a2a; /* verde mais forte no hover */
+        }
+
+        .mensagens {
+            margin-top: 20px;
+            padding: 10px;
+            background-color:rgb(233, 255, 227);
+            border: 1px solidrgb(8, 82, 10);
+            display: inline-block;
+            max-width: 90vw;
+            word-break: break-word;
+        }
+
+        .mensagens h2 {
+            color: rgb(17, 98, 20);
+        }
+        .frase {
+            margin: 24px auto 0 auto;
+            padding: 18px 18px 12px 18px;
+            background: #fff;
+            border: 2px solid #116214;
+            color: #116214;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(17,98,20,0.05);
+            display: block;
+            max-width: 95vw;
+            text-align: left;
+            font-size: 1.15em;
+            line-height: 1.6;
+            max-height: 180px;      /* altura máxima visível */
+            overflow-y: auto;       /* ativa a rolagem vertical se necessário */
+        }
+
+        /* Popup/modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 24px 18px;
+            border-radius: 8px;
+            min-width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+        .close {
+            float: right;
+            font-size: 22px;
+            font-weight: bold;
+            color: #e74c3c;
+            cursor: pointer;
+        }
+
+        .horarios-oracao {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            width: 100%;
+            margin: 0 auto 8px auto;
+            text-align: center;
+            line-height: 1.1;
+            white-space: normal; /* permite quebra só se necessário */
+            overflow-x: auto;
+        }
+
+        .mensagens, .frase {
+            background: #fff;
+            border: 2px solid #116214;
+            color: #116214;
+            border-radius: 8px;
+            margin: 24px auto 0 auto;
+            padding: 18px 18px 12px 18px;
+            box-shadow: 0 2px 10px rgba(17,98,20,0.05);
+            display: block;
+            max-width: 95vw;
+            text-align: left;
+            font-size: 1.15em;
+            line-height: 1.6;
+        }
+
+        .mensagens h2 {
+            color: #116214;
+            margin-bottom: 12px;
+        }
+
+        .horarios-oracao {
+            color: #116214;
+            font-weight: bold;
+            font-size: 1em;
+            white-space: normal;
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calendário de Oração Islâmico</h1>
+    <div class="calendar-container">
+        <!-- Navegação entre anos e meses -->
+        <div class="navigation">
+            <button type="button" onclick="navigate(-1, 0)">&lt;&lt;</button>
+            <button type="button" onclick="navigate(0, -1)">&lt;</button>
+            <span>{{ "%02d"|format(month) }}/{{ year }}</span>
+            <button type="button" onclick="navigate(0, 1)">&gt;</button>
+            <button type="button" onclick="navigate(1, 0)">&gt;&gt;</button>
+        </div>
+
+        <!-- Tabela do calendário -->
+        <table>
+            <thead>
+                <tr>
+                    {% for day in weekdays %}
+                    <th>{{ day }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for day in days %}
+                        {% if day == 0 %}
+                            <td></td>
+                        {% else %}
+                            <td onclick="selectDay({{ day }})">{{ day }}</td>
+                        {% endif %}
+                        {% if loop.index % 7 == 0 %}
+                        </tr><tr>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal/Popup -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body">
+                <!-- Conteúdo dinâmico via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Campos ocultos para latitude e longitude -->
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
+
+    <script>
+        function navigate(yearStep, monthStep) {
+            const currentYear = {{ year }};
+            const currentMonth = {{ month }};
+            let newYear = currentYear + yearStep;
+            let newMonth = currentMonth + monthStep;
+
+            if (newMonth > 12) {
+                newMonth = 1;
+                newYear++;
+            } else if (newMonth < 1) {
+                newMonth = 12;
+                newYear--;
+            }
+
+            // Não precisa mais de cidade/país
+            const url = `/calendario?year=${newYear}&month=${newMonth}`;
+            window.location.href = url;
+        }
+
+        function selectDay(day) {
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const year = {{ year }};
+            const month = {{ month }};
+            fetch(`/calendario/detalhe?year=${year}&month=${month}&day=${day}&latitude=${latitude}&longitude=${longitude}`)
+                .then(resp => resp.json())
+                .then(data => {
+                    let html = '';
+                    if (data.horarios) {
+                        html += `<div class="mensagens"><h2>Horários de Oração</h2><div class="horarios-oracao">${data.horarios}</div></div>`;
+                    }
+                    if (data.mensagem_ramadan) {
+                        html += `<div class="mensagens"><h2>Mensagem do Ramadan</h2><p>${data.mensagem_ramadan}</p></div>`;
+                    } else if (data.frase) {
+                        html += `<div class="frase"><strong>No Alcorão diz:</strong> <br>${data.frase}</div>`;
+                    }
+                    if (data.aviso) {
+                        html += `<div class="mensagens"><p>${data.aviso}</p></div>`;
+                    }
+                    document.getElementById('modal-body').innerHTML = html;
+                    document.getElementById('modal').style.display = 'flex';
+                });
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        // Fecha modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    // Habilite o calendário aqui, se necessário
+                }, function(error) {
+                    alert("Você precisa permitir o acesso à localização para usar o calendário de oração.");
+                    // Opcional: desabilite o calendário ou redirecione
+                });
+            } else {
+                alert("Geolocalização não suportada pelo seu navegador.");
+            }
+        };
+    </script>
+</body>
+</html>

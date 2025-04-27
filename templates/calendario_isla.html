@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Calendário Islâmico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+            margin-top: 20px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversor de Calendário Islâmico</h1>
+    <form method="POST">
+        <label for="gregorian_year">Ano (gregoriano):</label>
+        <input type="number" name="gregorian_year" required><br>
+        <label for="gregorian_month">Mês:</label>
+        <input type="number" name="gregorian_month" required><br>
+        <label for="gregorian_day">Dia:</label>
+        <input type="number" name="gregorian_day" required><br>
+        <button type="submit">Converter</button>
+    </form>
+
+    {% if hijri_date %}
+    <div class="result">
+        <h2>Data em Calendário Islâmico:</h2>
+        <p>{{ hijri_date[2] }}-{{ hijri_date[1] }}-{{ hijri_date[0] }}</p>
+    </div>
+    {% endif %}
+</body>
+</html>
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Alcorão Sagrado</title>
+    <!-- Corrija o caminho do CSS externo se necessário -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @font-face {
+            font-family: 'regular';
+            src: url('{{ url_for('static', filename='fonts/regular.ttf') }}') format('truetype');
+        }
+        body {
+            font-family: 'regular', Arial, sans-serif;
+            background-image: url('{{ url_for('static', filename='images/logo_centromahdi.png') }}');
+            background-size: 900px auto;
+            background-position: center -30px;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            color: #116214;
+        }
+        .container-alcorao {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 80vh;
+            width: 100vw;
+        }
+        .baixar-alcorao {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 80px;
+            flex: 1;
+        }
+        .baixar-alcorao h1 {
+            color: #116214;
+            font-size: 2em;
+            margin-bottom: 24px;
+        }
+        .baixar-alcorao .botoes {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 18px;
+            margin-top: 61px; /* aumenta o espaço acima dos botões */
+        }
+        .baixar-alcorao a {
+            color: #116214;
+            background: none;
+            border: 2px solid #116214;
+            border-radius: 6px;
+            padding: 10px 28px;
+            font-size: 1.1em;
+            font-family: 'regular', Arial, sans-serif;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            text-align: center;
+        }
+        .baixar-alcorao a:hover {
+            background: #116214;
+            color: #fff;
+        }
+        .baixar-alcorao .info {
+            margin-top: 10px;
+            font-size: 1em;
+            color: #116214;
+            text-align: center;
+        }
+        .frase-alcorao-box {
+            position: fixed;
+            top: 131px;
+            right: 40px;
+            width: 340px;
+            max-width: 90vw;
+            background: rgba(255,255,255,0.92);
+            border: 2px solid #116214;
+            border-radius: 8px;
+            color: #116214;
+            font-family: 'regular', Arial, sans-serif;
+            box-shadow: 0 2px 10px rgba(17,98,20,0.05);
+            padding: 18px 16px 16px 16px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .frase-alcorao-box button {
+            background: none;
+            border: 2px solid #116214;
+            color: #116214;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'regular', Arial, sans-serif;
+            font-weight: bold;
+            padding: 6px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .frase-alcorao-box button:hover {
+            background: #116214;
+            color: #fff;
+        }
+        .frase-alcorao {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 1.08em;
+            line-height: 1.5;
+            margin-top: 4px;
+            width: 100%;
+        }
+        @media (max-width: 800px) {
+            .container-alcorao {
+                flex-direction: column;
+                align-items: center;
+            }
+            .frase-alcorao-box {
+                position: static;
+                width: 95vw;
+                margin: 24px auto 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-alcorao">
+        <div class="baixar-alcorao">
+            <h1>Alcorão Sagrado</h1>
+            <div class="botoes">
+                <a href="{{ url_for('static', filename='assets/alcoraoSamir.pdf') }}" download>
+                    PDF (Trad. Samir El Hayek)
+                </a>
+                <a href="{{ url_for('static', filename='assets/alcoraoSamir.txt') }}" download>
+                    Texto (Trad. Samir El Hayek)
+                </a>
+            </div>
+            <div class="info">
+                Formatos disponíveis: PDF e Texto<br>
+                Tradução: Samir El Hayek
+            </div>
+        <div class="frase-alcorao-box" id="fraseBox">
+            <button onclick="novaFrase()">No Alcorão diz:</button>
+            <div class="frase-alcorao" id="fraseAlcorao">
+                <!-- Frase aleatória será exibida aqui -->
+            </div>
+        </div>
+    </div>
+    <script>
+        // Função para buscar frase aleatória do Alcorão via backend
+        function novaFrase() {
+            fetch('/frase_alcorao')
+                .then(resp => resp.json())
+                .then(data => {
+                    document.getElementById('fraseAlcorao').textContent = data.frase || 'Não foi possível obter a frase.';
+                })
+                .catch(() => {
+                    document.getElementById('fraseAlcorao').textContent = 'Erro ao buscar a frase.';
+                });
+        }
+        // Carrega uma frase ao abrir a página
+        document.addEventListener('DOMContentLoaded', novaFrase);
+    </script>
+</body>
+</html>
